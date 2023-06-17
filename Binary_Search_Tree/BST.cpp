@@ -19,14 +19,14 @@ BST::BST(BST_item_type item){
     }
 }
 //copy consrtructor & method
-BST::BST(BST& other){
-    if (other.root != NULL) {
-        this->size = other.size;
-        this->root = new BST_Node(other.root->item);
-        copy(root,other.root);
+BST::BST(const BST* other){
+    if (other != NULL && other->root != NULL) {
+        this->size = other->size;
+//        this->root = new BST_Node(other->root->item);
+        copy(root,other->root);
     }
 }
-void BST::copy(BST_Node *newTree, BST_Node*& otherNode) const{
+void BST::copy(BST_Node*& newTree, const BST_Node* otherNode) {
     if (otherNode != NULL){
         newTree = new BST_Node(otherNode->item);
         copy(newTree->left, otherNode->left);
@@ -64,22 +64,30 @@ void BST::remove(BST_item_type item) {
     }
 }
 BST_Node* BST::find(BST_item_type item) {
-    return find_execute(this->root, item);
+    BST_Node* newNode = NULL;
+    find_execute(this->root, newNode,item);
+    return newNode;
 }
 BST_item_type* BST::preorder(BST_Node* node){
-    BST_item_type* array = new BST_item_type[size];
+    BST_item_type* array = new BST_item_type[this->size];
     preorderTravers(node, array);
+    return array;
 }
 BST_item_type* BST::inorder(BST_Node* node){
-    BST_item_type* array = new BST_item_type[size];
+    BST_item_type* array = new BST_item_type[this->size];
     inorderTravers(node, array);
+    return array;
+
 }
 BST_item_type* BST::postorder(BST_Node* node){
-    BST_item_type* array = new BST_item_type[size];
+    BST_item_type* array = new BST_item_type[this->size];
     postorderTravers(node, array);
+    return array;
 }
-void BST::display(BST_item_type* traversMethod (BST_Node*)){
-    BST_item_type* array = traversMethod(this->root);
+void BST::display(BST_item_type* (BST::*traversMethod)(BST_Node*)){
+    globalIndex = 0;
+    BST_item_type* array = (this->*traversMethod)(this->root);
+            //traversMethod(this->root);
     for (int i = 0; i < size; ++i) {
         std::cout << array[i] << " ";
     }
@@ -88,14 +96,7 @@ void BST::display(BST_item_type* traversMethod (BST_Node*)){
         delete [] array;
 }
 void BST::display(){
-    BST_item_type* array;
-    preorder(this->root);
-    for (int i = 0; i < size; ++i) {
-        std::cout << array[i] << " ";
-    }
-    std::cout << "\n";
-    if (size > 0)
-        delete [] array;
+
 }
 bool BST::is_in_tree(BST_item_type item){
     BST_item_type* array = inorder(this->root);
@@ -108,94 +109,103 @@ bool BST::is_in_tree(BST_item_type item){
 //operation helpers
 //insert
 bool BST::insert_execute(BST_Node*& node, BST_item_type item){
+    static bool inserted = false;
     if (node != NULL && item > node->item){
         insert_execute(node->right,item);
     } else if (node != NULL && item <= node->item){
         insert_execute(node->left,item);
     } else {
         node = new BST_Node(item);
-        return true;
+        inserted = true;
     }
-    return false;
+    return inserted;
 }
 //remove
 bool BST::remove_execute(BST_item_type item){
+    static bool removed = false;
     BST_Node* node = find(item);
     if (node != NULL){
         remove_node(node);
-        return true;
+        removed = true;
     }
-    return false;
+    return removed;
 }
-void BST::remove_node(BST_Node *node) {
-    //cheking leaf
-    if (node->right == NULL && node->left == NULL)
+void BST::remove_node(BST_Node*& node) {
+    BST_Node* delPtr;
+    BST_item_type replacementItem;
+    if (size == 1){
+        delete this->root;
+        this->root = NULL;
+        return;
+    }
+    if (node->left == NULL && node->right == NULL){
         delete node;
-
-    //checking single parent
-    if (node->right != NULL){
-        if (node->left != NULL){
-            remove_two_children(node);
-        } else {
-            node->item = node->right->item;            //copy right
-            delete node->right;            //delete right
-        }
-    }
-    if (node->left != NULL){
-        if (node->right != NULL){
-            remove_two_children(node);
-        } else {
-            node->item = node->left->item;            //copy left
-            delete node->left;            //delete left
-        }
+    } else if (node->left != NULL && node->right == NULL){
+        delPtr = node;
+        node = node->left;
+        delPtr->left = NULL;
+        delete delPtr;
+        *delPtr = *node;
+    } else if (node->left == NULL && node->right != NULL){
+        delPtr = node;
+        node = node->right;
+        delPtr->right = NULL;
+        delete delPtr;
+        *delPtr = *node;
+    } else if (node->left != NULL && node->right != NULL){
+        inorder_successor(node->right,replacementItem);
+        node->item = replacementItem;
     }
 
 }
-void BST::remove_two_children(BST_Node* node){
-    BST_Node* inorderSuccessor = inorder_successor(node->right);
-    node->item = inorderSuccessor->item;
-    delete inorderSuccessor;
+void BST::remove_two_children(BST_Node*& node, BST_item_type& item){
+    inorder_successor(node->right, item);
 }
-BST_Node* BST::inorder_successor(BST_Node* node){
-    if (node != NULL && node->left != NULL)
-        inorder_successor(node->left);
-    return node;
+void BST::inorder_successor(BST_Node*& node, BST_item_type& item) {
+    if (node->left == NULL) {
+        item = node->item;
+        BST_Node *delPtr = node;
+        node = node->right;
+        delPtr->right = NULL;
+        delete delPtr;
+    } else {
+        inorder_successor(node->left, item);
+    }
 }
 //find
-BST_Node* BST::find_execute(BST_Node* node, BST_item_type item) {
-    if (node == NULL)
-        return NULL;
-    if (item > node->item){
-        insert_execute(node->right,item);
+BST_Node* BST::find_execute(BST_Node*& node, BST_Node*& newNode, BST_item_type item) {
+    if (node == NULL) {
+        newNode = NULL;
+    } else if (item > node->item){
+        find_execute(node->right,newNode,item);
     } else if (item < node->item){
-        insert_execute(node->left,item);
+        find_execute(node->left,newNode,item);
     } else if(item == node->item) {
-        return node;
+        newNode = node;
     }
-    return NULL;
 }
 //traversal
-void BST::preorderTravers(BST_Node* node, BST_item_type* array, int index){
+void BST::preorderTravers(BST_Node* node, BST_item_type* array){
     if (node != NULL){
-        array[index] = node->item;
-        index++;
-        preorderTravers(node->left, array, index);
-        preorderTravers(node->right, array, index);
+        array[globalIndex] = node->item;
+        globalIndex++;
+        preorderTravers(node->left, array);
+        preorderTravers(node->right, array);
     }
 }
-void BST::inorderTravers(BST_Node* node, BST_item_type* array, int index){
+void BST::inorderTravers(BST_Node* node, BST_item_type* array){
     if (node != NULL){
-        inorderTravers(node->left, array, index);
-        array[index] = node->item;
-        index++;
-        inorderTravers(node->right, array, index);
+        inorderTravers(node->left, array);
+        array[globalIndex] = node->item;
+        globalIndex++;
+        inorderTravers(node->right, array);
     }
 }
-void BST::postorderTravers(BST_Node* node, BST_item_type* array, int index){
+void BST::postorderTravers(BST_Node* node, BST_item_type* array){
     if (node != NULL){
-        postorderTravers(node->left, array, index);
-        postorderTravers(node->right, array, index);
-        array[index] = node->item;
-        index++;
+        postorderTravers(node->left, array);
+        postorderTravers(node->right, array);
+        array[globalIndex] = node->item;
+        globalIndex++;
     }
 }
