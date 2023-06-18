@@ -33,6 +33,10 @@ public:
     BST_item_type* inorder(BST_Node* node);
     BST_item_type* postorder(BST_Node* node);
     bool is_in_tree(BST_item_type item);
+
+    BST_Node* getRoot() {return this->root;}
+
+
 private:
     BST_Node* root;
     int size;
