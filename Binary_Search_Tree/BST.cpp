@@ -123,14 +123,16 @@ bool BST::insert_execute(BST_Node*& node, BST_item_type item){
 //remove
 bool BST::remove_execute(BST_item_type item){
     static bool removed = false;
-    BST_Node* node = find(item);
-    if (node != NULL){
-        remove_node(node);
+    if (this->root != NULL){
+        remove_node(this->root, item);
         removed = true;
     }
     return removed;
 }
-void BST::remove_node(BST_Node*& node) {
+void BST::remove_node(BST_Node*& node, BST_item_type item) {
+    if (node == NULL){
+        return;
+    }
     BST_Node* delPtr;
     BST_item_type replacementItem;
     if (size == 1){
@@ -138,23 +140,38 @@ void BST::remove_node(BST_Node*& node) {
         this->root = NULL;
         return;
     }
-    if (node->left == NULL && node->right == NULL){
-        delete node;
-    } else if (node->left != NULL && node->right == NULL){
-        delPtr = node;
-        node = node->left;
-        delPtr->left = NULL;
-        delete delPtr;
-        *delPtr = *node;
-    } else if (node->left == NULL && node->right != NULL){
-        delPtr = node;
-        node = node->right;
-        delPtr->right = NULL;
-        delete delPtr;
-        *delPtr = *node;
-    } else if (node->left != NULL && node->right != NULL){
-        inorder_successor(node->right,replacementItem);
-        node->item = replacementItem;
+
+    if (item < node->item){
+        remove_node(node->left, item);
+    } else if (item > node->item) {
+        remove_node(node->right, item);
+    } else if (item == node->item) {
+        if (node->left == NULL && node->right == NULL){
+            delPtr = node;
+            node = NULL;
+            delete delPtr;
+        } else if (node->left != NULL && node->right == NULL){
+            delPtr = node;
+            node = node->left;
+            delPtr->left = NULL;
+            if (node == this->root) {
+                delPtr = this->root;
+            }
+            delete delPtr;
+            delPtr = node;
+        } else if (node->left == NULL && node->right != NULL){
+            delPtr = node;
+            node = node->right;
+            delPtr->right = NULL;
+            if (node == this->root) {
+                delPtr = this->root;
+            }
+            delete delPtr;
+            delPtr = node;
+        } else if (node->left != NULL && node->right != NULL){
+            inorder_successor(node->right,replacementItem);
+            node->item = replacementItem;
+        }
     }
 
 }

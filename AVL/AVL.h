@@ -28,6 +28,7 @@ public:
     void display();
     AVL_Node* find(AVL_item_type item);
 
+
 private:
     BST* tree;
 
@@ -39,6 +40,12 @@ private:
     int subtreeHeight(AVL_Node*& node);
     int max(int a, int b);
     void rebuild(AVL_Node*& node, AVL_item_type);
+    bool isLRCase(AVL_Node* node);
+    bool isRLCase(AVL_Node* node);
+    void rotateRL(AVL_Node* &treePtr);
+    void rotateLR(AVL_Node* &treePtr);
+    void findImbalance(AVL_Node* node);
+
 };
 
 

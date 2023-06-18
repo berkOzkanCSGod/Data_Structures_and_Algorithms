@@ -35,6 +35,7 @@ public:
     bool is_in_tree(BST_item_type item);
 
     BST_Node* getRoot() {return this->root;}
+    BST_Node* setRoot(BST_Node* newNode) {this->root = newNode;}
 
 
 private:
@@ -44,7 +45,7 @@ private:
     //operation helpers
     bool insert_execute(BST_Node*& node, BST_item_type item);
     bool remove_execute(BST_item_type item);
-    void remove_node(BST_Node*& node);
+    void remove_node(BST_Node*& node, BST_item_type item);
     void remove_two_children(BST_Node*& node, BST_item_type& item);
     void inorder_successor(BST_Node*& node, BST_item_type& item);
     BST_Node* find_execute(BST_Node*& node,  BST_Node*& newNode, BST_item_type item);
