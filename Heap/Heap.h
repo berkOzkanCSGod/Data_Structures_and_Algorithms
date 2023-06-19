@@ -11,6 +11,7 @@
 const int MAX_HEAP = 10;
 typedef int HeapItemType;
 
+
 class Heap {
 private:
     HeapItemType items[MAX_HEAP];	// array of heap items

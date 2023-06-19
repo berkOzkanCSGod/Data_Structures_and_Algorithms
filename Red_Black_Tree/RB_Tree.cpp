@@ -37,33 +37,33 @@ RB_Node* RB_Tree::find(RB_item_type item){
     return this->tree->find(item);
 }
 
-void RB_Tree::recolorAdded(RB_Node*& node, RB_Node*& addedNode){
-    if (node == NULL){
+void RB_Tree::recolorAdded(RB_Node*& node, RB_Node*& addedNode) {
+    if (node == NULL) {
         return;
     }
     //find
-    if (addedNode->item < node->item){
+    if (addedNode->item < node->item) {
         recolorAdded(node->left, addedNode);
-    } else if (addedNode->item > node->item){
+    } else if (addedNode->item > node->item) {
         recolorAdded(node->right, addedNode);
     } else {
-        RB_Node* grandParent = NULL;
+        RB_Node *grandParent = NULL;
         findGrandParent(tree->root, addedNode, grandParent);
-        RB_Node* uncle = NULL;
+        RB_Node *uncle = NULL;
         findUncle(addedNode, uncle);
-        RB_Node* parent = NULL;
+        RB_Node *parent = NULL;
         findParent(tree->root, addedNode, parent);
 
-        if (addedNode == tree->root){
+        if (addedNode == tree->root) {
             addedNode->color = BLACK;
         } else if (parent->color == RED && uncle != NULL && uncle->color == RED) {
-            RB_Node* uncle2 = NULL;
-            RB_Node* parent2 = NULL;
-            RB_Node* grandParent2 = NULL;
+            RB_Node *uncle2 = NULL;
+            RB_Node *parent2 = NULL;
+            RB_Node *grandParent2 = NULL;
             findUncle(addedNode, uncle2);
             findParent(tree->root, addedNode, parent2);
             findGrandParent(tree->root, addedNode, grandParent2);
-            do{
+            do {
                 findUncle(addedNode, uncle2);
                 findParent(tree->root, addedNode, parent2);
                 parent2->color = BLACK;
@@ -72,35 +72,35 @@ void RB_Tree::recolorAdded(RB_Node*& node, RB_Node*& addedNode){
                 addedNode = grandParent;
                 findGrandParent(tree->root, addedNode, grandParent2);
             } while (parent2->color == RED && uncle2 != NULL && uncle2->color == RED);
-            if (addedNode == tree->root){
+            if (addedNode == tree->root) {
                 addedNode->color = BLACK;
             }
-        } else if (parent->color == RED && (uncle == NULL || uncle->color == BLACK)){
-                if (isLL(addedNode)){
-                    rotateR(parent);
-                } else if (isRR(addedNode)){
-                    rotateL(grandParent);
-                } else if (isLR(addedNode)){
-                    rotateR(addedNode);
-                    rotateL(parent);
-                } else if (isRL(addedNode)){
-                    rotateL(addedNode);
-                    rotateR(parent);
-                }
+        } else if (parent->color == RED && (uncle == NULL || uncle->color == BLACK)) {
+            if (isLL(addedNode)) {
+                rotateR(parent);
+            } else if (isRR(addedNode)) {
+                rotateL(grandParent);
+            } else if (isLR(addedNode)) {
+                rotateR(addedNode);
+                rotateL(parent);
+            } else if (isRL(addedNode)) {
+                rotateL(addedNode);
+                rotateR(parent);
+            }
         }
 
         //case 1: if node == root
-            // node->color = BLACK;
+        // node->color = BLACK;
         //case 2: while (parent & uncle == RED)
-            // parent & uncle = BLACK;
-            // grandParent = RED;
-            //x = grandParent;
+        // parent & uncle = BLACK;
+        // grandParent = RED;
+        //x = grandParent;
         //case 3:
-            //parent = red & uncle = black & x is left and parent is left
-            // rotate on parent to right
+        //parent = red & uncle = black & x is left and parent is left
+        // rotate on parent to right
         //case 4:
-            //parent = red & uncle = black & x is left and parent is right
-            //rotate on x right, on parent left
+        //parent = red & uncle = black & x is left and parent is right
+        //rotate on x right, on parent left
     }
 }
 

@@ -49,7 +49,7 @@ void Heap::heapDelete(HeapItemType& rootItem){
 void Heap::heapRebuild(int root){
     int child = 2 * root + 1;
     if ( child < size ) {
-
+        
         int rightChild = child + 1;
         if ((rightChild < size) && (items[rightChild] > items[child]))
             child = rightChild;
