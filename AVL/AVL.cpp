@@ -14,7 +14,7 @@ AVL::~AVL(){
 }
 
 AVL::AVL(const AVL*& other){
-    BST* tree = new BST(other->tree);
+    this->tree = new BST(other->tree);
 }
 
 void AVL::insert(AVL_item_type item){

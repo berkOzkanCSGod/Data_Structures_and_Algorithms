@@ -56,6 +56,9 @@ private:
 
 
     void display(BST_item_type *(*traversMethod)(BST_Node *));
+
+    friend class AVL;
+    friend class RB_Tree;
 };
 
 
