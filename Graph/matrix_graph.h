@@ -7,13 +7,16 @@
 
 #include <iostream>
 #include "Matrix.h"
+#include <queue>
+#include <stack>
 
 typedef char graph_vertex_type;
 
 struct Vertex{
     graph_vertex_type value;
-    Vertex(graph_vertex_type v): value(v) {}
-    Vertex() { value = '\0';}
+    bool visited = false;
+    Vertex(graph_vertex_type v): value(v), visited(false) {}
+    Vertex() { value = '\0'; visited = false;}
     //can have more info here
 };
 
@@ -41,6 +44,12 @@ public:
     void remove_edge(graph_vertex_type, graph_vertex_type);
         //print
     void print();
+
+    //traversal
+        //BFT
+    void breath_first_travers(graph_vertex_type vertex);
+    void depth_first_travers(graph_vertex_type vertex);
+
 
 private:
     Matrix* matrix;

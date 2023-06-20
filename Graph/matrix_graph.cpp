@@ -87,7 +87,8 @@ void matrix_graph::add_edge(graph_vertex_type v1, graph_vertex_type v2, int weig
     int index1 = find_vertex_index(v1);
     int index2 = find_vertex_index(v2);
     if (index1 >= 0 || index1 < size || index2 >= 0 && index2 < size)
-        matrix->add_weight(index1,index2,weight, directional);
+        if (index1 != index2)
+            matrix->add_weight(index1,index2,weight, directional);
 }
 
 void matrix_graph::remove_edge(graph_vertex_type v1, graph_vertex_type v2){
@@ -99,4 +100,66 @@ void matrix_graph::remove_edge(graph_vertex_type v1, graph_vertex_type v2){
 
 Vertex* matrix_graph::find_vertex_node(graph_vertex_type vertex){
     return &vertex_list[find_vertex_index(vertex)];
+}
+
+void matrix_graph::breath_first_travers(graph_vertex_type vertex){
+    std::queue<Vertex*> Q;
+    int vertex_index;
+
+    Q.push(find_vertex_node(vertex));
+    vertex_list[find_vertex_index(vertex)].visited = true;
+
+    while (!Q.empty()){
+
+        for (int i = 0; i < size; ++i) {
+            vertex_index = find_vertex_index(Q.front()->value);
+            if (matrix->matrix[vertex_index][i] > 0){
+                if (!vertex_list[i].visited) {
+                    Q.push(&vertex_list[i]);
+                    vertex_list[i].visited = true;
+                }
+            }
+        }
+
+        std::cout << Q.front()->value << " ";
+        Q.pop();
+    }
+
+    for (int i = 0; i < size; ++i) {
+        vertex_list[i].visited = false;
+    }
+
+    std::cout << "\n";
+    std::cout << "\n";
+}
+
+void matrix_graph::depth_first_travers(graph_vertex_type vertex){
+    std::stack<Vertex*> S;
+    int vertex_index;
+
+    S.push(find_vertex_node(vertex));
+    vertex_list[find_vertex_index(vertex)].visited = true;
+
+    while (!S.empty()){
+        for (int i = 0; i < size; ++i) {
+            vertex_index = find_vertex_index(S.top()->value);
+            if (matrix->matrix[vertex_index][i] > 0){
+                if (!vertex_list[i].visited) {
+                    S.push(&vertex_list[i]);
+                    vertex_list[i].visited = true;
+
+                }
+            }
+        }
+
+        std::cout << S.top()->value << " ";
+        S.pop();
+    }
+
+    for (int i = 0; i < size; ++i) {
+        vertex_list[i].visited = false;
+    }
+
+    std::cout << "\n";
+    std::cout << "\n";
 }

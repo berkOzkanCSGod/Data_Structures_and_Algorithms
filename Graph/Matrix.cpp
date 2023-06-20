@@ -70,7 +70,7 @@ void Matrix::print(){
 }
 
 void Matrix::add_weight(int index_row, int index_col, int weight, bool directional){
-    if(!directional) {
+    if(directional) {
         this->matrix[index_row][index_col] = weight;
     } else {
         this->matrix[index_row][index_col] = weight;
