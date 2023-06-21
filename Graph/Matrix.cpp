@@ -73,7 +73,7 @@ void Matrix::print(int row){
     for (int j = 0; j < size; ++j) {
         std::printf("%d ", matrix[row][j]);
     }
-    std::cout << "\n";
+    std::cout << "\n ";
 }
 
 void Matrix::add_weight(int index_row, int index_col, int weight, bool directional){

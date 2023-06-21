@@ -52,6 +52,7 @@ public:
     void dijkstra(graph_vertex_type);
 //    void prim(graph_vertex_type);
 
+
 private:
     Matrix* matrix;
     Vertex* vertex_list;

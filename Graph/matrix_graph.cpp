@@ -1,6 +1,7 @@
 
 #include "matrix_graph.h"
 
+
 matrix_graph::matrix_graph(){
     matrix = new Matrix();
     vertex_list = new Vertex[0];
