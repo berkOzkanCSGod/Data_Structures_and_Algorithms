@@ -19,4 +19,4 @@ Algorithms:
 - Pre, in, and post-order traverse (Trees)
 
 FYI:
-- RB and AVL implementation use the BST implementation. So, when cloning any RB or AVL make sure to also clone BST.
+- RB and AVL implementation use the BST implementation. So, when cloning RB or AVL make sure to also clone BST as well.
