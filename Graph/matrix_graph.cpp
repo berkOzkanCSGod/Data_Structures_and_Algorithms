@@ -125,9 +125,7 @@ void matrix_graph::breath_first_travers(graph_vertex_type vertex){
         Q.pop();
     }
 
-    for (int i = 0; i < size; ++i) {
-        vertex_list[i].visited = false;
-    }
+    reset_visited_status();
 
     std::cout << "\n";
     std::cout << "\n";
@@ -156,10 +154,127 @@ void matrix_graph::depth_first_travers(graph_vertex_type vertex){
         S.pop();
     }
 
-    for (int i = 0; i < size; ++i) {
-        vertex_list[i].visited = false;
-    }
+    reset_visited_status();
 
     std::cout << "\n";
     std::cout << "\n";
+}
+
+void matrix_graph::reset_visited_status() {
+    for (int i = 0; i < size; ++i) {
+        vertex_list[i].visited = false;
+    }
+}
+
+void matrix_graph::dijkstra(graph_vertex_type v){
+
+    reset_visited_status();
+
+    //turn matrix into inf
+    directionalize_matrix();
+
+    int* weight = dijkstra_execute(find_vertex_node(v));
+    for (int i = 0; i < size; ++i) {
+        std::cout << vertex_list[i].value << " ";
+    }
+    std::cout << "\n";
+
+    for (int i = 0; i < size; ++i) {
+        if (weight[i] == std::numeric_limits<int>::max()){
+            std::cout << "INF ";
+        } else {
+            std::cout << weight[i] << " ";
+        }
+    }
+    std::cout << "\n";
+
+    //turn matrix back to normal
+    un_directionalize_matrix();
+    reset_visited_status();
+    delete [] weight;
+}
+//void matrix_graph::prim(graph_vertex_type v){
+//    reset_visited_status();
+//    int* tree;
+//
+//
+//
+//
+//    reset_visited_status();
+//    delete [] tree;
+//}
+
+void matrix_graph::directionalize_matrix(){
+    for (int i = 0; i < size; ++i) {
+        for (int j = 0; j < size; ++j) {
+            if (matrix->matrix[i][j] == 0){
+                matrix->add_weight(i,j,std::numeric_limits<int>::max(), true);
+            }
+        }
+    }
+}
+void matrix_graph::un_directionalize_matrix(){
+    for (int i = 0; i < size; ++i) {
+        for (int j = 0; j < size; ++j) {
+            if (matrix->matrix[i][j] == std::numeric_limits<int>::max()){
+                matrix->add_weight(i,j,0, true);
+            }
+        }
+    }
+}
+
+int* matrix_graph::dijkstra_execute(Vertex* v) {
+    int* weight = new int[size];
+    int vertex_index = find_vertex_index(v->value);
+
+    //copy row of starting vertex
+    for (int i = 0; i < size; ++i) {
+        weight[i] = matrix->matrix[vertex_index][i];
+    }
+
+    //cycle through each node
+    for (int count = 0; count < size; ++count) {
+        v->visited = true;
+        vertex_index = find_vertex_index(v->value);
+        //cycle through each edge
+        for (int i = 0; i < size; ++i) {
+            if (!vertex_list[i].visited){
+                if ( weight[vertex_index] < std::numeric_limits<int>::max() && matrix->matrix[vertex_index][i] < std::numeric_limits<int>::max() && weight[i] > weight[vertex_index]+matrix->matrix[vertex_index][i]){
+                    weight[i] = weight[vertex_index]+matrix->matrix[vertex_index][i];
+                }
+            }
+        }
+        int min_index = 0;
+        for (int i = 0; i < size; ++i) {
+            if (!vertex_list[i].visited && weight[i] < weight[min_index]){
+                min_index = i;
+            }
+        }
+        v = &vertex_list[min_index];
+    }
+
+
+
+    return weight;
+}
+//int* matrix_graph::prim_execute(Vertex* v) {
+//    int* tree = new int[size];
+//    int vertex_index = find_vertex_index(v->value);
+//
+//    tree[0];
+//
+//
+//    return tree;
+//}
+
+int matrix_graph::find_min_edge_index(Vertex* v){
+    int v_index = find_vertex_index(v->value);
+
+    int min_index = 0;
+    for (int i = 0; i < size; ++i) {
+        if (!vertex_list[i].visited && matrix->matrix[v_index][i] < matrix->matrix[v_index][min_index]){
+            min_index = i;
+        }
+    }
+
 }

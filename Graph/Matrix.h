@@ -17,6 +17,7 @@ public:
     ~Matrix();
 
     void print();
+    void print(int row);
 
 private:
     int** matrix;

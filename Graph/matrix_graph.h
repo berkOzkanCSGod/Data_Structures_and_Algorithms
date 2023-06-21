@@ -9,6 +9,7 @@
 #include "Matrix.h"
 #include <queue>
 #include <stack>
+#include <limits>
 
 typedef char graph_vertex_type;
 
@@ -44,17 +45,25 @@ public:
     void remove_edge(graph_vertex_type, graph_vertex_type);
         //print
     void print();
-
     //traversal
         //BFT
     void breath_first_travers(graph_vertex_type vertex);
     void depth_first_travers(graph_vertex_type vertex);
-
+    void dijkstra(graph_vertex_type);
+//    void prim(graph_vertex_type);
 
 private:
     Matrix* matrix;
     Vertex* vertex_list;
     int size;
+
+    int* dijkstra_execute(Vertex*);
+//    int* prim_execute(Vertex*);
+    void reset_visited_status();
+    void directionalize_matrix();
+    void un_directionalize_matrix();
+    int find_min_edge_index(Vertex* v);
+
 
 };
 
